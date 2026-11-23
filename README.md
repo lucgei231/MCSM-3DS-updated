@@ -1,3 +1,9 @@
+#Changes from m1-q's port
+- CIA versions
+- completely removed russian, only english
+- bundled the assets with the CIA so you don't have to download assets
+- added .bat files for compiling
+
 # mcsm-3ds <img src="icon.png" alt="MCSM 3DS Icon" width="32"/> 
 
 
@@ -25,7 +31,7 @@ Inspired by [mcsm_portable](https://github.com/entitybtw/mcsm_portable) (PSP por
 - [x] Persistent settings & autosave system
 
 ### v1.0.x-ep1 (Fixes & QoL)
-- [ ] English set as default interface language
+- [x] English set as default interface language
 - [ ] System sleep mode / lid close handling via `aptHook`
 - [ ] UI sound effects (Minecraft button clicks and navigation SFX)
 - [ ] Pop-up notification overlay (*"Jesse will remember that"*)
