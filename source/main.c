@@ -98,7 +98,7 @@ void setup_choice_layout(void) {
 void play_scene(const char* scene_name) {
 	if (!scene_name || strlen(scene_name) == 0) return;
 
-	// Проверяем наличие слова "credits" в любом варианте пути (например ch6_nether/credits или credits)
+	// Check for the credits scene in any scene path.
 	if (strstr(scene_name, "credits") != NULL) {
 		app_state = STATE_EPISODE_CREDITS;
 		choice_active = false;
@@ -167,7 +167,7 @@ void enter_main_menu(void) {
 	app_state = STATE_MAINMENU;
 	settings_return_state = STATE_MAINMENU;
 	menu_selected_idx = 0;
-	global_fade_alpha = 1.0f; // Плавный Fade-In меню
+	global_fade_alpha = 1.0f; // Smooth fade-in for the menu
 	player_start_stream("mcsm_mainmenu.ogv", true);
 }
 
@@ -197,20 +197,20 @@ int main(int argc, char* argv[]) {
 		touchPosition touch;
 		hidTouchRead(&touch);
 
-		// Плавный Fade-In при открытии меню
+		// Smooth fade-in when opening the menu
 		if (app_state == STATE_MAINMENU && global_fade_alpha > 0.0f) {
 			global_fade_alpha -= 0.05f;
 			if (global_fade_alpha < 0.0f) global_fade_alpha = 0.0f;
 		}
 
-		// Секретный дебаг L + R + X
+		// Secret debug menu: L + R + X
 		if ((kHeld & KEY_L) && (kHeld & KEY_R) && (kDown & KEY_X)) {
 			g_config.debug_unlocked = !g_config.debug_unlocked;
 			save_config_write();
 		}
 
 		// ----------------------------------------------------
-		// 1. ТИТУЛЬНЫЙ ЭКРАН
+		// 1. TITLE SCREEN
 		// ----------------------------------------------------
 		if (app_state == STATE_TITLE) {
 			if ((kDown & KEY_START) || (kDown & KEY_A) || (kDown & KEY_TOUCH)) app_state = STATE_FADE_OUT_TITLE;
@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
 			if (!player_is_playing()) enter_main_menu();
 		}
 		// ----------------------------------------------------
-		// 2. ГЛАВНОЕ МЕНЮ
+		// 2. MAIN MENU
 		// ----------------------------------------------------
 		else if (app_state == STATE_MAINMENU) {
 			int count = 4;
@@ -249,7 +249,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		// ----------------------------------------------------
-		// 3. МЕНЮ PLAY
+		// 3. PLAY MENU
 		// ----------------------------------------------------
 		else if (app_state == STATE_MENU_PLAY) {
 			bool can_continue = save_game_exists();
@@ -271,7 +271,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		// ----------------------------------------------------
-		// 4. МЕНЮ НАСТРОЕК
+		// 4. SETTINGS MENU
 		// ----------------------------------------------------
 		else if (app_state == STATE_MENU_SETTINGS) {
 			int count = g_config.debug_unlocked ? 4 : 3;
@@ -300,19 +300,17 @@ int main(int argc, char* argv[]) {
 		}
 		else if (app_state == STATE_MENU_GAMEPLAY) {
 			if (kDown & KEY_B) { save_config_write(); app_state = STATE_MENU_SETTINGS; menu_selected_idx = 0; }
-			if (kDown & KEY_DOWN || kDown & KEY_UP) menu_selected_idx = 1 - menu_selected_idx;
+			menu_selected_idx = 0;
 			if (kDown & (KEY_A | KEY_RIGHT | KEY_LEFT)) {
-				if (menu_selected_idx == 0) g_config.timer_mode = (g_config.timer_mode + 1) % 3;
-				else if (menu_selected_idx == 1) g_config.text_lang = 1 - g_config.text_lang;
+				g_config.timer_mode = (g_config.timer_mode + 1) % 3;
 				save_config_write();
 			}
 		}
 		else if (app_state == STATE_MENU_AUDIO) {
 			if (kDown & KEY_B) { save_config_write(); app_state = STATE_MENU_SETTINGS; menu_selected_idx = 1; }
-			if (kDown & KEY_DOWN || kDown & KEY_UP) menu_selected_idx = 1 - menu_selected_idx;
+			menu_selected_idx = 0;
 			if (kDown & (KEY_A | KEY_RIGHT | KEY_LEFT)) {
-				if (menu_selected_idx == 0) g_config.voice_lang = 1 - g_config.voice_lang;
-				else if (menu_selected_idx == 1) g_config.subs_mode = (g_config.subs_mode + 1) % 3;
+				g_config.subs_mode = (g_config.subs_mode == SUBS_OFF) ? SUBS_ENGLISH : SUBS_OFF;
 				save_config_write();
 			}
 		}
@@ -347,14 +345,14 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		// ----------------------------------------------------
-		// 5. ТИТРЫ ЭПИЗОДА (Защита от моментального сброса)
+		// 5. EPISODE CREDITS (protect against immediate reset)
 		// ----------------------------------------------------
 		else if (app_state == STATE_EPISODE_CREDITS) {
 			if (player_is_playing()) {
 				was_playing = true;
 			}
 
-			// Скипаем только если ролик реально играл и закончился, ИЛИ нажата кнопка пользователем
+			// Skip only after playback ended or when the user presses a button
 			if ((kDown & (KEY_START | KEY_A | KEY_B | KEY_X | KEY_TOUCH)) || (was_playing && !player_is_playing())) {
 				app_state = STATE_FADE_OUT_CREDITS;
 			}
@@ -370,7 +368,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		// ----------------------------------------------------
-		// 6. ИГРОВОЙ ПРОЦЕСС
+		// 6. GAMEPLAY
 		// ----------------------------------------------------
 		else if (app_state == STATE_GAME) {
 			double elapsed = (double)(osGetTime() - scene_start_time) / 1000.0;
@@ -466,7 +464,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		// ----------------------------------------------------
-		// 7. МЕНЮ ПАУЗЫ
+		// 7. PAUSE MENU
 		// ----------------------------------------------------
 		else if (app_state == STATE_PAUSE) {
 			if (kDown & KEY_DOWN) menu_selected_idx = (menu_selected_idx + 1) % 3;
@@ -494,7 +492,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		// ----------------------------------------------------
-		// ОТРЕНДЕРИТЬ ВЕРХНИЙ ЭКРАН
+		// RENDER THE TOP SCREEN
 		// ----------------------------------------------------
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(top, C2D_Color32(0, 0, 0, 255));
@@ -510,15 +508,13 @@ int main(int argc, char* argv[]) {
 		if (is_in_pause_menu) {
 			C2D_DrawRectSolid(0.0f, 0.0f, 0.6f, 400.0f, 240.0f, C2D_Color32(0, 0, 0, 130));
 			if (app_state == STATE_PAUSE) {
-				ui_draw_top_hint_bar("A", (g_config.text_lang == LANG_RUSSIAN ? "Выбрать" : "Select"),
-									 "B", (g_config.text_lang == LANG_RUSSIAN ? "Продолжить" : "Resume"));
+				ui_draw_top_hint_bar("A", "Select", "B", "Resume");
 			} else {
-				ui_draw_top_hint_bar("A", (g_config.text_lang == LANG_RUSSIAN ? "Выбрать" : "Select"),
-									 "B", (g_config.text_lang == LANG_RUSSIAN ? "Назад" : "Back"));
+				ui_draw_top_hint_bar("A", "Select", "B", "Back");
 			}
 		}
 		else if (app_state == STATE_EPISODE_CREDITS) {
-			ui_draw_top_hint_bar("A", (g_config.text_lang == LANG_RUSSIAN ? "Пропустить" : "Skip"), NULL, NULL);
+			ui_draw_top_hint_bar("A", "Skip", NULL, NULL);
 		}
 		else {
 			if (app_state == STATE_MAINMENU || app_state == STATE_MENU_PLAY ||
@@ -529,73 +525,62 @@ int main(int argc, char* argv[]) {
 				}
 
 				if (app_state == STATE_MAINMENU) {
-					ui_draw_top_hint_bar("A", (g_config.text_lang == LANG_RUSSIAN ? "Выбрать" : "Select"), NULL, NULL);
+					ui_draw_top_hint_bar("A", "Select", NULL, NULL);
 				} else if (app_state == STATE_MENU_PLAY || app_state == STATE_MENU_SETTINGS ||
 					app_state == STATE_MENU_GAMEPLAY || app_state == STATE_MENU_AUDIO ||
 					app_state == STATE_MENU_DEBUG) {
-					ui_draw_top_hint_bar("A", (g_config.text_lang == LANG_RUSSIAN ? "Выбрать" : "Select"),
-										 "B", (g_config.text_lang == LANG_RUSSIAN ? "Назад" : "Back"));
+					ui_draw_top_hint_bar("A", "Select", "B", "Back");
 					} else if (app_state == STATE_MENU_CONTROLS || app_state == STATE_MENU_CREDITS) {
-						ui_draw_top_hint_bar("B", (g_config.text_lang == LANG_RUSSIAN ? "Назад" : "Back"), NULL, NULL);
+						ui_draw_top_hint_bar("B", "Back", NULL, NULL);
 					}
 		}
 
 		if (global_fade_alpha > 0.0f) ui_draw_fade(global_fade_alpha);
 
 		// ----------------------------------------------------
-		// ОТРЕНДЕРИТЬ НИЖНИЙ ЭКРАН
+		// RENDER THE BOTTOM SCREEN
 		// ----------------------------------------------------
 		C2D_TargetClear(bottom, C2D_Color32(0, 0, 0, 255));
 		C2D_SceneBegin(bottom);
 
-		bool is_ru = (g_config.text_lang == LANG_RUSSIAN);
-
 		if (app_state == STATE_TITLE || app_state == STATE_EPISODE_CREDITS) {
-			// Чистый черный экран на титрах и титульнике
+			// Keep the video area clear on the title and credits screens.
 		}
 		else if (app_state == STATE_MAINMENU) {
 			ui_draw_background();
-			ui_draw_menu_button(30.0f, 20.0f, 260.0f, 42.0f, is_ru ? "ИГРАТЬ" : "PLAY", menu_selected_idx == 0);
-			ui_draw_menu_button(30.0f, 70.0f, 260.0f, 42.0f, is_ru ? "НАСТРОЙКИ" : "SETTINGS", menu_selected_idx == 1);
-			ui_draw_menu_button(30.0f, 120.0f, 260.0f, 42.0f, is_ru ? "АВТОРЫ" : "CREDITS", menu_selected_idx == 2);
-			ui_draw_menu_button(30.0f, 170.0f, 260.0f, 42.0f, is_ru ? "ВЫХОД" : "EXIT GAME", menu_selected_idx == 3);
+			ui_draw_menu_button(30.0f, 20.0f, 260.0f, 42.0f, "PLAY", menu_selected_idx == 0);
+			ui_draw_menu_button(30.0f, 70.0f, 260.0f, 42.0f, "SETTINGS", menu_selected_idx == 1);
+			ui_draw_menu_button(30.0f, 120.0f, 260.0f, 42.0f, "CREDITS", menu_selected_idx == 2);
+			ui_draw_menu_button(30.0f, 170.0f, 260.0f, 42.0f, "EXIT GAME", menu_selected_idx == 3);
 		}
 		else if (app_state == STATE_MENU_PLAY) {
 			ui_draw_background();
-			ui_draw_menu_button(30.0f, 35.0f, 260.0f, 46.0f, save_game_exists() ? (is_ru ? "ПРОДОЛЖИТЬ" : "CONTINUE") : (is_ru ? "[ПРОДОЛЖИТЬ]" : "[CONTINUE]"), menu_selected_idx == 0);
-			ui_draw_menu_button(30.0f, 95.0f, 260.0f, 46.0f, is_ru ? "НОВАЯ ИГРА" : "NEW GAME", menu_selected_idx == 1);
-			ui_draw_menu_button(30.0f, 155.0f, 260.0f, 46.0f, is_ru ? "ЭПИЗОДЫ" : "EPISODES", menu_selected_idx == 2);
+			ui_draw_menu_button(30.0f, 35.0f, 260.0f, 46.0f, save_game_exists() ? "CONTINUE" : "[CONTINUE]", menu_selected_idx == 0);
+			ui_draw_menu_button(30.0f, 95.0f, 260.0f, 46.0f, "NEW GAME", menu_selected_idx == 1);
+			ui_draw_menu_button(30.0f, 155.0f, 260.0f, 46.0f, "EPISODES", menu_selected_idx == 2);
 		}
 		else if (app_state == STATE_MENU_SETTINGS) {
 			ui_draw_background();
-			ui_draw_menu_button(30.0f, 25.0f, 260.0f, 44.0f, is_ru ? "ГЕЙМПЛЕЙ" : "GAMEPLAY", menu_selected_idx == 0);
-			ui_draw_menu_button(30.0f, 75.0f, 260.0f, 44.0f, is_ru ? "ВИДЕО И ЗВУК" : "VIDEO & AUDIO", menu_selected_idx == 1);
-			ui_draw_menu_button(30.0f, 125.0f, 260.0f, 44.0f, is_ru ? "УПРАВЛЕНИЕ" : "CONTROLS", menu_selected_idx == 2);
+			ui_draw_menu_button(30.0f, 25.0f, 260.0f, 44.0f, "GAMEPLAY", menu_selected_idx == 0);
+			ui_draw_menu_button(30.0f, 75.0f, 260.0f, 44.0f, "VIDEO & AUDIO", menu_selected_idx == 1);
+			ui_draw_menu_button(30.0f, 125.0f, 260.0f, 44.0f, "CONTROLS", menu_selected_idx == 2);
 			if (g_config.debug_unlocked) {
 				ui_draw_menu_button(30.0f, 175.0f, 260.0f, 44.0f, "[DEBUG MENU]", menu_selected_idx == 3);
 			}
 		}
 		else if (app_state == STATE_MENU_GAMEPLAY) {
 			ui_draw_background();
-			char buf_timer[64], buf_lang[64];
-			const char* timer_names_ru[] = { "Таймер: Обычный", "Таймер: Увеличенный", "Таймер: Без времени" };
-			const char* timer_names_en[] = { "Timer: Normal", "Timer: Extended", "Timer: Infinite" };
-			snprintf(buf_timer, sizeof(buf_timer), "%s", is_ru ? timer_names_ru[g_config.timer_mode] : timer_names_en[g_config.timer_mode]);
-			snprintf(buf_lang, sizeof(buf_lang), "%s: %s", is_ru ? "Язык" : "Language", is_ru ? "Русский" : "English");
-
+			char buf_timer[64];
+			const char* timer_names[] = { "Timer: Normal", "Timer: Extended", "Timer: Infinite" };
+			snprintf(buf_timer, sizeof(buf_timer), "%s", timer_names[g_config.timer_mode]);
 			ui_draw_menu_button(30.0f, 45.0f, 260.0f, 46.0f, buf_timer, menu_selected_idx == 0);
-			ui_draw_menu_button(30.0f, 105.0f, 260.0f, 46.0f, buf_lang, menu_selected_idx == 1);
 		}
 		else if (app_state == STATE_MENU_AUDIO) {
 			ui_draw_background();
-			char buf_voice[64], buf_subs[64];
-			const char* subs_names_ru[] = { "Субтитры: Выкл", "Субтитры: English", "Субтитры: Русский" };
-			const char* subs_names_en[] = { "Subtitles: OFF", "Subtitles: English", "Subtitles: Russian" };
-			snprintf(buf_voice, sizeof(buf_voice), "%s: %s", is_ru ? "Озвучка" : "Voice", g_config.voice_lang == LANG_RUSSIAN ? "Русский" : "English");
-			snprintf(buf_subs, sizeof(buf_subs), "%s", is_ru ? subs_names_ru[g_config.subs_mode] : subs_names_en[g_config.subs_mode]);
-
-			ui_draw_menu_button(30.0f, 45.0f, 260.0f, 46.0f, buf_voice, menu_selected_idx == 0);
-			ui_draw_menu_button(30.0f, 105.0f, 260.0f, 46.0f, buf_subs, menu_selected_idx == 1);
+			char buf_subs[64];
+			snprintf(buf_subs, sizeof(buf_subs), "%s", g_config.subs_mode == SUBS_OFF ? "Subtitles: OFF" : "Subtitles: English");
+			ui_draw_menu_button(30.0f, 45.0f, 260.0f, 46.0f, "Voice: English", menu_selected_idx == 0);
+			ui_draw_menu_button(30.0f, 105.0f, 260.0f, 46.0f, buf_subs, false);
 		}
 		else if (app_state == STATE_MENU_DEBUG) {
 			ui_draw_background();
@@ -609,7 +594,7 @@ int main(int argc, char* argv[]) {
 		else if (app_state == STATE_MENU_CREDITS) {
 			ui_draw_background();
 			C2D_DrawRectSolid(20.0f, 35.0f, 0.2f, 280.0f, 170.0f, C2D_Color32(0, 0, 0, 190));
-			ui_draw_mc_text(40.0f, 50.0f, 0.25f, 0.65f, is_ru ? "АВТОРЫ" : "CREDITS", C2D_Color32(255, 215, 0, 255), true);
+			ui_draw_mc_text(40.0f, 50.0f, 0.25f, 0.65f, "CREDITS", C2D_Color32(255, 215, 0, 255), true);
 			ui_draw_mc_text(40.0f, 80.0f, 0.25f, 0.55f, "Original: Telltale & Mojang", C2D_Color32(230, 230, 230, 255), true);
 			ui_draw_mc_text(40.0f, 110.0f, 0.25f, 0.55f, "PSP Port: entitybtw", C2D_Color32(230, 230, 230, 255), true);
 			ui_draw_mc_text(40.0f, 140.0f, 0.25f, 0.55f, "3DS Port: m1_q", C2D_Color32(230, 230, 230, 255), true);
@@ -617,9 +602,9 @@ int main(int argc, char* argv[]) {
 		}
 		else if (app_state == STATE_PAUSE) {
 			ui_draw_background();
-			ui_draw_menu_button(30.0f, 35.0f, 260.0f, 46.0f, is_ru ? "ПРОДОЛЖИТЬ" : "RESUME", menu_selected_idx == 0);
-			ui_draw_menu_button(30.0f, 95.0f, 260.0f, 46.0f, is_ru ? "НАСТРОЙКИ" : "SETTINGS", menu_selected_idx == 1);
-			ui_draw_menu_button(30.0f, 155.0f, 260.0f, 46.0f, is_ru ? "В ГЛАВНОЕ МЕНЮ" : "QUIT TO MENU", menu_selected_idx == 2);
+			ui_draw_menu_button(30.0f, 35.0f, 260.0f, 46.0f, "RESUME", menu_selected_idx == 0);
+			ui_draw_menu_button(30.0f, 95.0f, 260.0f, 46.0f, "SETTINGS", menu_selected_idx == 1);
+			ui_draw_menu_button(30.0f, 155.0f, 260.0f, 46.0f, "QUIT TO MENU", menu_selected_idx == 2);
 		}
 		else if (app_state == STATE_GAME) {
 			ui_draw_background();

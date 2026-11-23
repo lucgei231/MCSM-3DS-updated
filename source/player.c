@@ -144,13 +144,20 @@ void player_stop_stream(void) {
 }
 
 bool player_start_stream(const char* filename, bool loop) {
-    char fullpath[128];
-    snprintf(fullpath, sizeof(fullpath), "sdmc:/assets/video/%s", filename);
+    char romfs_path[128];
+    char sdmc_path[128];
+    snprintf(romfs_path, sizeof(romfs_path), "romfs:/video/%s", filename);
+    snprintf(sdmc_path, sizeof(sdmc_path), "sdmc:/assets/video/%s", filename);
+    const char* fullpath = romfs_path;
 
     player_stop_stream();
 
     FILE* fp = fopen(fullpath, "r");
-    if (!fp) return false;
+    if (!fp) {
+        fullpath = sdmc_path;
+        fp = fopen(fullpath, "r");
+        if (!fp) return false;
+    }
     fclose(fp);
 
     int ret = THEORA_Create(&vidCtx, fullpath);

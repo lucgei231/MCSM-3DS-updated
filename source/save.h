@@ -13,13 +13,11 @@ typedef enum {
 
 typedef enum {
     LANG_ENGLISH = 0,
-    LANG_RUSSIAN
 } GameLang;
 
 typedef enum {
     SUBS_OFF = 0,
-    SUBS_ENGLISH,
-    SUBS_RUSSIAN
+    SUBS_ENGLISH
 } SubtitlesMode;
 
 typedef struct {
@@ -52,7 +50,7 @@ void save_config_write(void);
 void save_game_write(const char* scene_name);
 bool save_game_exists(void);
 
-// Работа с сюжетными флагами
+// Story flag helpers
 void flag_set(const char* key, const char* val);
 const char* flag_get(const char* key);
 bool flag_is(const char* key, const char* expected_val);

@@ -1,8 +1,8 @@
 # =========================================================
-# ГЛАВА 6: НЕЗЕР И ФИНАЛ ЭПИЗОДА 1 (ИСПРАВЛЕННАЯ СТРУКТУРА)
+# CHAPTER 6: NETHER AND EPISODE 1 FINALE
 # =========================================================
 
-# --- 1. Побег через Портал в Незер ---
+# --- 1. Escape through the Nether portal ---
 [01_petra_will_make_it]
 video = ch6_nether/01_petra_will_make_it.ogv
 total_duration = 118.4
@@ -15,7 +15,7 @@ total_duration = 110.9
 Y = Hands in the air! -> ch6_nether/02_hand_in_the_air
 A = Hold on tight!    -> ch6_nether/02_hold_on_tight
 
-# --- 2. Вагонетки в Незере ---
+# --- 2. Mine carts in the Nether ---
 [02_hand_in_the_air]
 video = ch6_nether/02_hand_in_the_air.ogv
 total_duration = 166.6
@@ -28,7 +28,7 @@ total_duration = 166.9
 Y = Yeah, it's awful. -> ch6_nether/03_yeah_its_awful
 A = It was fine.      -> ch6_nether/03_it_was_fine
 
-# --- 3. Выход из портала на болоте ---
+# --- 3. Exit the portal in the swamp ---
 [03_yeah_its_awful]
 video = ch6_nether/03_yeah_its_awful.ogv
 total_duration = 93.2
@@ -41,7 +41,7 @@ total_duration = 98.6
 Y = I'll go first. -> ch6_nether/04_ill_go_first
 A = You can do it. -> ch6_nether/04_u_can_do_it
 
-# --- 4. Выбор ночлега: Домик на дереве VS Землянка ---
+# --- 4. Shelter choice: treehouse vs. cave ---
 [04_ill_go_first]
 video = ch6_nether/04_ill_go_first.ogv
 total_duration = 135.1
@@ -54,7 +54,7 @@ total_duration = 129.2
 Y = Build a treehouse. -> ch6_nether/05_build_treehouse
 A = Build a dirt hut.  -> ch6_nether/05_build_dirt_hut
 
-# --- 5. Постройка укрытия (Выставляет флаг shelter!) ---
+# --- 5. Build shelter (sets the shelter flag) ---
 [05_build_treehouse]
 video = ch6_nether/05_build_treehouse.ogv
 total_duration = 97.0
@@ -69,7 +69,7 @@ set_flag = shelter:dirt_hut
 Y = Give cookie. -> ch6_nether/06_give_cookie_dirt_hut
 A = Keep cookie. -> ch6_nether/06_keep_cookie_dirt_hut_
 
-# Ветка Домика на дереве:
+# Treehouse branch:
 [06_give_cookie_treehouse]
 video = ch6_nether/06_give_cookie_treehouse.ogv
 total_duration = 147.1
@@ -82,7 +82,7 @@ total_duration = 123.6
 Y = Stay here.     -> ch6_nether/07_stay_here_treehouse
 A = You should go. -> ch6_nether/07_u_should_go_treehouse
 
-# Ветка Землянки:
+# Cave branch:
 [06_give_cookie_dirt_hut]
 video = ch6_nether/06_give_cookie_dirt_hut.ogv
 total_duration = 147.1
@@ -95,7 +95,7 @@ total_duration = 123.6
 Y = Stay here.     -> ch6_nether/07_stay_here_dirt_hut
 A = You should go. -> ch6_nether/07_u_should_go_dirt_house
 
-# Ветка А: Лукас остался с нами -> СРАЗУ идем в храм на крафт оружия (сцена 08)!
+# Branch A: Lukas stayed with us -> go straight to the weapon-crafting temple (scene 08)!
 [07_stay_here_treehouse]
 video = ch6_nether/07_stay_here_treehouse.ogv
 total_duration = 245.1
@@ -108,7 +108,7 @@ total_duration = 248.4
 Y = Craft a bow!          -> ch6_nether/08_craft_bow
 A = Craft a fishing pole! -> ch6_nether/08_craft_fishing_pole
 
-# Ветка Б: Лукаса прогнали -> диалог снаружи у входа (сцена 09)!
+# Branch B: Lukas was sent away -> outdoor dialogue near the entrance (scene 09)!
 [07_u_should_go_treehouse]
 video = ch6_nether/07_u_should_go_treehouse.ogv
 total_duration = 134.3
@@ -161,7 +161,7 @@ X = Axel     -> ch6_nether/11_axel
 A = Olivia   -> ch6_nether/11_olivia
 B = Lukas    -> ch6_nether/11_lukas
 
-# Разговор с Акселем (Аксель исключен из списка)
+# Axel dialogue (Axel excluded from the choice list)
 [11_axel]
 video = ch6_nether/11_axel.ogv
 total_duration = 39.9
@@ -169,7 +169,7 @@ Y = Pedestal -> ch6_nether/11_pedestal
 A = Olivia   -> ch6_nether/11_olivia
 B = Lukas    -> ch6_nether/11_lukas
 
-# Разговор с Оливией (Оливия исключена из списка)
+# Olivia dialogue (Olivia excluded from the choice list)
 [11_olivia]
 video = ch6_nether/11_olivia.ogv
 total_duration = 43.9
@@ -177,7 +177,7 @@ Y = Pedestal -> ch6_nether/11_pedestal
 X = Axel     -> ch6_nether/11_axel
 B = Lukas    -> ch6_nether/11_lukas
 
-# Разговор с Лукасом (Лукас исключен из списка)
+# Lukas dialogue (Lukas excluded from the choice list)
 [11_lukas]
 video = ch6_nether/11_lukas.ogv
 total_duration = 42.1
@@ -214,7 +214,7 @@ Y = Levers -> ch6_nether/12_levers
 X = Axel   -> ch6_nether/12_axel
 A = Olivia -> ch6_nether/12_olivia
 
-# --- ФИНАЛЬНЫЙ КЛИФФХЭНГЕР ЭПИЗОДА 1: ВЫБОР РЫЧАГА ---
+# --- Episode 1 final cliffhanger: choose the lever ---
 [12_levers]
 video = ch6_nether/12_levers.ogv
 total_duration = 168.3

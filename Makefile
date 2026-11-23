@@ -41,7 +41,7 @@ SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include $(SOURCES)
 GRAPHICS	:=	gfx
-#ROMFS		:=	romfs
+ROMFS		:=	assets
 #GFXBUILD	:=	$(ROMFS)/gfx
 
 #---------------------------------------------------------------------------------
@@ -156,17 +156,42 @@ ifneq ($(ROMFS),)
 	export _3DSXFLAGS += --romfs=$(CURDIR)/$(ROMFS)
 endif
 
-.PHONY: all clean
+.PHONY: all cia 3dsx clean
 
 #---------------------------------------------------------------------------------
 all:
 	@mkdir -p $(BUILD) $(GFXBUILD)
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C "$(BUILD)" -f "$(CURDIR)/Makefile"
+
+3dsx:
+	@mkdir -p $(BUILD) $(GFXBUILD)
+	@$(MAKE) --no-print-directory -C "$(BUILD)" -f "$(CURDIR)/Makefile"
+
+cia: all
+	@$(MAKE) --no-print-directory cia-build
+
+cia-build:
+	@echo Building CIA...
+	@mkdir -p build
+	@3dstool -c -t romfs -f build/assets.romfs --romfs-dir assets
+	@printf '%s\n' \
+		'BasicInfo:' \
+		'  Title: "Minecraft: Story Mode 3DS"' \
+		'  CompanyCode: "00"' \
+		'  ProductCode: CTR-P-MCSM' \
+		'' \
+		'TitleInfo:' \
+		'  UniqueId: 0x4d435' > build/mcsm.rsf
+	@if command -v makerom >/dev/null 2>&1; then \
+		makerom -f cia -o $(TARGET).cia -elf $(TARGET).elf -romfs build/assets.romfs -rsf build/mcsm.rsf -icon $(TARGET).smdh -desc app:4 -target t; \
+	else \
+		echo "Error: makerom was not found in PATH."; exit 1; \
+	fi
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(OUTPUT).smdh $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).3dsx $(TARGET).cia $(OUTPUT).smdh $(TARGET).elf
 
 
 #---------------------------------------------------------------------------------

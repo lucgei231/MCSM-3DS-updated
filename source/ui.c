@@ -107,24 +107,47 @@ static void free_ui_image(UIImage* img) {
 bool ui_init(void) {
     ui_text_buf = C2D_TextBufNew(4096);
 
-    load_png_to_image("sdmc:/assets/pause_bg.png", &img_bg);
-    if (!load_png_to_image("sdmc:/assets/logo.png", &img_logo)) {
+    const char* pause_bg = "romfs:/pause_bg.png";
+    FILE* test = fopen(pause_bg, "rb");
+    if (!test) pause_bg = "sdmc:/assets/pause_bg.png";
+    else fclose(test);
+    load_png_to_image(pause_bg, &img_bg);
+
+    const char* root = "romfs:";
+    char logo_path[128];
+    snprintf(logo_path, sizeof(logo_path), "%s/logo.png", root);
+    test = fopen(logo_path, "rb");
+    if (!test) {
+        snprintf(logo_path, sizeof(logo_path), "sdmc:/assets/logo.png");
+        test = fopen(logo_path, "rb");
+    }
+    if (test) fclose(test);
+    if (!load_png_to_image(logo_path, &img_logo)) {
         load_png_to_image("sdmc:/assets/mainmenu/logo.png", &img_logo);
     }
-    load_png_to_image("sdmc:/assets/static.png", &img_btn_static);
-    load_png_to_image("sdmc:/assets/selected.png", &img_btn_selected);
 
-    load_png_to_image("sdmc:/assets/btn_a.png", &img_btn_a);
-    load_png_to_image("sdmc:/assets/btn_b.png", &img_btn_b);
-    load_png_to_image("sdmc:/assets/btn_x.png", &img_btn_x);
-    load_png_to_image("sdmc:/assets/btn_y.png", &img_btn_y);
-
-    load_png_to_image("sdmc:/assets/controls.png", &img_controls);
+    const char* image_names[] = {"static.png", "selected.png", "btn_a.png", "btn_b.png", "btn_x.png", "btn_y.png", "controls.png"};
+    UIImage* images[] = {&img_btn_static, &img_btn_selected, &img_btn_a, &img_btn_b, &img_btn_x, &img_btn_y, &img_controls};
+    for (size_t i = 0; i < sizeof(image_names) / sizeof(image_names[0]); i++) {
+        char romfs_path[128];
+        char sdmc_path[128];
+        snprintf(romfs_path, sizeof(romfs_path), "romfs:/%s", image_names[i]);
+        snprintf(sdmc_path, sizeof(sdmc_path), "sdmc:/assets/%s", image_names[i]);
+        test = fopen(romfs_path, "rb");
+        const char* path = romfs_path;
+        if (!test) path = sdmc_path;
+        else fclose(test);
+        load_png_to_image(path, images[i]);
+    }
 
     const char* font_candidates[] = {
+        "romfs:/minecraft.bcfnt",
         "sdmc:/assets/minecraft.bcfnt",
+        "romfs:/Minecraft Seven_2.bcfnt",
         "sdmc:/assets/Minecraft Seven_2.bcfnt",
+        "romfs:/Minecraft_Seven_2.bcfnt",
         "sdmc:/assets/Minecraft_Seven_2.bcfnt",
+        "romfs:/font.bcfnt",
         "sdmc:/assets/font.bcfnt"
     };
 
@@ -242,7 +265,7 @@ void ui_draw_menu_button(float x, float y, float w, float h, const char* text, b
         C2D_TextGetDimensions(&text_obj, scale, scale, &tw, &th);
 
         float text_x = x + (w - tw) / 2.0f;
-        // Сдвигаем на 2.5px выше для идеального оптического центра плашки
+        // Move the label 2.5 pixels up for a cleaner visual center
         float text_y = y + (h - th) / 2.0f - 2.5f;
 
         u32 text_col = is_selected ? C2D_Color32(255, 255, 120, 255) : C2D_Color32(225, 225, 225, 255);

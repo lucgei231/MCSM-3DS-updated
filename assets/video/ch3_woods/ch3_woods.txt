@@ -71,7 +71,7 @@ total_duration = 67.5
 Y = Craft a stone sword! -> ch3_woods/04_craft_sword_noruben
 A = Craft a lever!       -> ch3_woods/04_craft_lever_noruben
 
-# --- Автоподстановка {build} при прыжке / бое ---
+# --- Automatic {build} substitution during jumps and fights ---
 [04_craft_sword_withruben]
 video = ch3_woods/04_craft_sword_withruben.ogv
 total_duration = 113.8

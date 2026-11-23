@@ -96,14 +96,18 @@ bool story_load_scene(const char* scene_path, SceneData* out) {
     bool in_target_section = false;
     bool found = false;
 
-    char candidate_txt_paths[4][256];
+    char candidate_txt_paths[8][256];
     int num_candidates = 0;
 
     if (strlen(chapter_dir) > 0) {
+        snprintf(candidate_txt_paths[num_candidates++], 256, "romfs:/video/%s/%s.txt", chapter_dir, chapter_dir);
+        snprintf(candidate_txt_paths[num_candidates++], 256, "romfs:/video/%s.txt", chapter_dir);
+        snprintf(candidate_txt_paths[num_candidates++], 256, "romfs:/video/%s/chapter.txt", chapter_dir);
         snprintf(candidate_txt_paths[num_candidates++], 256, "sdmc:/assets/video/%s/%s.txt", chapter_dir, chapter_dir);
         snprintf(candidate_txt_paths[num_candidates++], 256, "sdmc:/assets/video/%s.txt", chapter_dir);
         snprintf(candidate_txt_paths[num_candidates++], 256, "sdmc:/assets/video/%s/chapter.txt", chapter_dir);
     } else {
+        snprintf(candidate_txt_paths[num_candidates++], 256, "romfs:/video/story.txt");
         snprintf(candidate_txt_paths[num_candidates++], 256, "sdmc:/assets/video/story.txt");
     }
 
@@ -190,18 +194,28 @@ bool story_load_scene(const char* scene_path, SceneData* out) {
 
     char test_vid[256];
     if (strlen(raw_video_val) > 0) {
-        snprintf(test_vid, sizeof(test_vid), "sdmc:/assets/video/%s/%s", chapter_dir, raw_video_val);
+        snprintf(test_vid, sizeof(test_vid), "romfs:/video/%s/%s", chapter_dir, raw_video_val);
         if (file_exists_on_sd(test_vid)) {
             snprintf(out->video_file, sizeof(out->video_file), "%s/%s", chapter_dir, raw_video_val);
         } else {
-            strncpy(out->video_file, raw_video_val, sizeof(out->video_file) - 1);
+            snprintf(test_vid, sizeof(test_vid), "sdmc:/assets/video/%s/%s", chapter_dir, raw_video_val);
+            if (file_exists_on_sd(test_vid)) {
+                snprintf(out->video_file, sizeof(out->video_file), "%s/%s", chapter_dir, raw_video_val);
+            } else {
+                strncpy(out->video_file, raw_video_val, sizeof(out->video_file) - 1);
+            }
         }
     } else {
-        snprintf(test_vid, sizeof(test_vid), "sdmc:/assets/video/%s/%s.ogv", chapter_dir, scene_name);
+        snprintf(test_vid, sizeof(test_vid), "romfs:/video/%s/%s.ogv", chapter_dir, scene_name);
         if (file_exists_on_sd(test_vid)) {
             snprintf(out->video_file, sizeof(out->video_file), "%s/%s.ogv", chapter_dir, scene_name);
         } else {
-            snprintf(out->video_file, sizeof(out->video_file), "%s.ogv", scene_name);
+            snprintf(test_vid, sizeof(test_vid), "sdmc:/assets/video/%s/%s.ogv", chapter_dir, scene_name);
+            if (file_exists_on_sd(test_vid)) {
+                snprintf(out->video_file, sizeof(out->video_file), "%s/%s.ogv", chapter_dir, scene_name);
+            } else {
+                snprintf(out->video_file, sizeof(out->video_file), "%s.ogv", scene_name);
+            }
         }
     }
 

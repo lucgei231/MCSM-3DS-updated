@@ -13,6 +13,6 @@ bool player_is_playing(void);
 
 void player_draw_frame(float center_x, float center_y);
 
-// Получение времени и общей длины текущего видео
+// Get the current and total video playback time
 double player_get_duration(void);
 double player_get_time(void);

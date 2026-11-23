@@ -72,7 +72,7 @@ total_duration = 112.5
 Y = He can't stop it!     -> ch5_wither/06_he_cant_stop_it_nolukas
 A = What are you doing?! -> ch5_wither/06_what_r_u_doing_nolukas
 
-# --- Автоподстановка {build} в сценах Бури ---
+# --- Automatic {build} substitution in Storm scenes ---
 [06_he_cant_stop_it_withlukas]
 video = ch5_wither/06_he_cant_stop_it_withlukas.ogv
 total_duration = 150.1
@@ -145,7 +145,7 @@ total_duration = 66.0
 Y = Save Gabriel! -> ch5_wither/09_save_gabriel
 A = Save Petra!   -> ch5_wither/09_save_petra
 
-# --- Главный выбор финала Главы 5 ---
+# --- Chapter 5 final choice ---
 [09_save_gabriel]
 video = ch5_wither/09_save_gabriel.ogv
 total_duration = 154.1

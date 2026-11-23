@@ -1,6 +1,7 @@
 #include "save.h"
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 
 GameConfig g_config;
 SaveData g_save;
@@ -15,13 +16,21 @@ void save_system_init(void) {
 
     memset(&g_save, 0, sizeof(SaveData));
 
-    FILE* fp = fopen("sdmc:/assets/settings.dat", "rb");
+    mkdir("sdmc:/3ds", 0777);
+    mkdir("sdmc:/3ds/mcsm", 0777);
+
+    FILE* fp = fopen("sdmc:/3ds/mcsm/settings.dat", "rb");
+    if (!fp) fp = fopen("sdmc:/assets/settings.dat", "rb");
     if (fp) {
         fread(&g_config, sizeof(GameConfig), 1, fp);
         fclose(fp);
     }
+    g_config.text_lang = LANG_ENGLISH;
+    g_config.voice_lang = LANG_ENGLISH;
+    if (g_config.subs_mode != SUBS_OFF) g_config.subs_mode = SUBS_ENGLISH;
 
-    FILE* sf = fopen("sdmc:/assets/save.dat", "rb");
+    FILE* sf = fopen("sdmc:/3ds/mcsm/save.dat", "rb");
+    if (!sf) sf = fopen("sdmc:/assets/save.dat", "rb");
     if (sf) {
         fread(&g_save, sizeof(SaveData), 1, sf);
         g_save.has_save = true;
@@ -30,7 +39,7 @@ void save_system_init(void) {
 }
 
 void save_config_write(void) {
-    FILE* fp = fopen("sdmc:/assets/settings.dat", "wb");
+    FILE* fp = fopen("sdmc:/3ds/mcsm/settings.dat", "wb");
     if (fp) {
         fwrite(&g_config, sizeof(GameConfig), 1, fp);
         fclose(fp);
@@ -44,7 +53,7 @@ void save_game_write(const char* scene_name) {
     strncpy(g_save.current_scene, scene_name, sizeof(g_save.current_scene) - 1);
     g_save.episode = 1;
 
-    FILE* sf = fopen("sdmc:/assets/save.dat", "wb");
+    FILE* sf = fopen("sdmc:/3ds/mcsm/save.dat", "wb");
     if (sf) {
         fwrite(&g_save, sizeof(SaveData), 1, sf);
         fclose(sf);
@@ -58,7 +67,7 @@ bool save_game_exists(void) {
 void flag_set(const char* key, const char* val) {
     if (!key || !val) return;
 
-    // Ищем существующий флаг
+    // Find an existing flag
     for (int i = 0; i < g_save.flags_count; i++) {
         if (!strcmp(g_save.flags[i].key, key)) {
             strncpy(g_save.flags[i].val, val, sizeof(g_save.flags[i].val) - 1);

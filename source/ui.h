@@ -28,6 +28,6 @@ void ui_draw_fade(float alpha);
 void ui_draw_top_hint_bar(const char* btn1, const char* text1, const char* btn2, const char* text2);
 void ui_draw_controls_screen(void);
 
-// Нативный рендер Minecraft BCFNT шрифта
+// Native rendering for the Minecraft BCFNT font
 void ui_draw_mc_text(float x, float y, float depth, float scale, const char* text, u32 color, bool with_shadow);
 float ui_get_mc_text_width(const char* text, float scale);
